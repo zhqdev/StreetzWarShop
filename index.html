@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streetz War Roblox Shop</title>
+    <style>
+        :root {
+            /* vars */
+            --hue1: 255;
+            --hue2: 222;
+            --border: 1px;
+            --border-color: hsl(var(--hue2), 12%, 20%);
+            --radius: 22px;
+            --ease: cubic-bezier(0.5, 1, 0.89, 1);
+        }
+
+        body {
+            background: #08090d;
+            background-image: url(https://assets.codepen.io/13471/abstract-light.jpg), linear-gradient(to right in oklab, hsl(var(--hue2) 50% 75%), hsl(var(--hue1) 50% 75%));
+            background-size: cover;
+            background-position: center;
+            background-blend-mode: hard-light;
+            padding: 0;
+            margin: 0;
+            font-family: 'Asap', sans-serif;
+            color: #737985;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #app {
+            padding: 2svw;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        #app > header {
+            display: flex;
+            gap: 0.5em;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #app > header img {
+            width: 200px;
+            height: auto;
+        }
+
+        #app > header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            color: color-mix(in oklab, #fff 70%, hsl(var(--hue1) 50% 50%));
+        }
+
+        #app > header p {
+            margin: 0;
+            color: color-mix(in oklab, #fff 40%, hsl(var(--hue2) 50% 50%));
+        }
+
+        .shop {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .item {
+            position: relative;
+            border-radius: var(--radius);
+            border: var(--border) solid var(--border-color);
+            padding: 1em;
+            background: linear-gradient(235deg, hsl(var(--hue1) 50% 10% / 0.8), hsl(var(--hue1) 50% 10% / 0) 33%), 
+                        linear-gradient(45deg, hsl(var(--hue2) 50% 10% / 0.8), hsl(var(--hue2) 50% 10% / 0) 33%), 
+                        linear-gradient(hsl(220deg 25% 4.8% / 0.66));
+            backdrop-filter: blur(12px);
+            box-shadow: hsl(var(--hue2) 50% 2%) 0px 10px 16px -8px, hsl(var(--hue2) 50% 4%) 0px 20px 36px -14px;
+            transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+        }
+
+        .item:hover {
+            transform: scale(1.05);
+            box-shadow: hsl(var(--hue2) 50% 4%) 0px 15px 24px -10px;
+        }
+
+        .item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: calc(var(--radius) * 0.5);
+            margin-bottom: 10px;
+        }
+
+        .item h2 {
+            font-size: 1.2em;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        .item p {
+            font-size: 1em;
+            margin: 5px 0;
+            color: #ddd;
+        }
+
+        .item a, .item button {
+            display: inline-block;
+            padding: 10px;
+            background: linear-gradient(90deg, hsl(var(--hue1) 29% 13% / 0.5), hsl(var(--hue1) 30% 15% / 0.5) 24% 32%, hsl(var(--hue1) 5% 7% / 0.5));
+            border: 1px solid hsl(var(--hue2) 13% 18.5% / 0.5);
+            border-radius: calc(var(--radius) * 0.33333);
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+        }
+
+        .item a:hover, .item button:hover {
+            background: linear-gradient(90deg, hsl(var(--hue1) 15% 16% / 0.7), hsl(var(--hue1) 40% 24% / 0.7) 20% 32%, hsl(var(--hue1) 2% 12% / 0.7));
+            color: #fff;
+        }
+
+        .login-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(90deg, hsl(var(--hue1) 29% 13% / 0.5), hsl(var(--hue1) 30% 15% / 0.5) 24% 32%, hsl(var(--hue1) 5% 7% / 0.5));
+            border: 1px solid hsl(var(--hue2) 13% 18.5% / 0.5);
+            border-radius: calc(var(--radius) * 0.33333);
+            color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s var(--ease);
+            z-index: 1001;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(90deg, hsl(var(--hue1) 15% 16% / 0.7), hsl(var(--hue1) 40% 24% / 0.7) 20% 32%, hsl(var(--hue1) 2% 12% / 0.7));
+        }
+
+        .auth-container, .admin-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 275px;
+            border-radius: var(--radius);
+            border: var(--border) solid var(--border-color);
+            padding: 1em;
+            background: linear-gradient(235deg, hsl(var(--hue1) 50% 10% / 0.8), hsl(var(--hue1) 50% 10% / 0) 33%), 
+                        linear-gradient(45deg, hsl(var(--hue2) 50% 10% / 0.8), hsl(var(--hue2) 50% 10% / 0) 33%), 
+                        linear-gradient(hsl(220deg 25% 4.8% / 0.66));
+            backdrop-filter: blur(12px);
+            box-shadow: hsl(var(--hue2) 50% 2%) 0px 10px 16px -8px, hsl(var(--hue2) 50% 4%) 0px 20px 36px -14px;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+            transition-property: visibility, opacity;
+            transition-duration: 0s, 0.25s;
+            transition-delay: 0.5s, 0s;
+            transition-timing-function: var(--ease);
+        }
+
+        .auth-container {
+            z-index: 1000;
+        }
+
+        .admin-container {
+            z-index: 999;
+        }
+
+        .auth-container.open, .admin-container.open {
+            visibility: visible;
+            opacity: 1;
+            pointer-events: auto;
+            transition-delay: 0s;
+        }
+
+        .auth-container .inner, .admin-container .inner {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            font-size: 0.875rem;
+        }
+
+        .auth-container input, .admin-container input {
+            --tint2: hsl(var(--hue2) 50% 90% / 0.1);
+            font-family: 'Asap', sans-serif;
+            font-weight: 300;
+            box-shadow: 0 0 0 1px transparent;
+            border: 1px solid hsl(var(--hue2) 13% 18.5% / 0.5);
+            background: hsl(var(--hue1) 0% 40% / 0.05);
+            border-radius: calc(var(--radius) * 0.33333);
+            padding: 0.66em;
+            color: #fff;
+        }
+
+        .auth-container button, .admin-container button {
+            padding: 0.66em;
+            background: linear-gradient(90deg, hsl(var(--hue1) 29% 13% / 0.5), hsl(var(--hue1) 30% 15% / 0.5) 24% 32%, hsl(var(--hue1) 5% 7% / 0.5));
+            border: 1px solid hsl(var(--hue2) 13% 18.5% / 0.5);
+            border-radius: calc(var(--radius) * 0.33333);
+            color: #fff;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s var(--ease);
+        }
+
+        .auth-container button:hover, .admin-container button:hover {
+            background: linear-gradient(90deg, hsl(var(--hue1) 15% 16% / 0.7), hsl(var(--hue1) 40% 24% / 0.7) 20% 32%, hsl(var(--hue1) 2% 12% / 0.7));
+        }
+
+        .admin-container hr {
+            width: 100%;
+            height: 0.5px;
+            background: var(--border-color);
+            border: none;
+            margin: 0.25em 0 0.5em;
+            opacity: 0.66;
+        }
+
+        .admin-container h2 {
+            font-size: 1em;
+            margin: 10px 0;
+            color: #fff;
+        }
+
+        /* Effets de glow */
+        .item .shine, .item .glow {
+            --hue: var(--hue1);
+        }
+
+        .item .shine-bottom, .item .glow-bottom {
+            --hue: var(--hue2);
+            --conic: 135deg;
+        }
+
+        .item .shine, .item .shine::before, .item .shine::after {
+            pointer-events: none;
+            border-radius: 0;
+            border-top-right-radius: var(--radius);
+            border-bottom-left-radius: var(--radius);
+            border: 1px solid transparent;
+            width: 75%;
+            height: auto;
+            min-height: 0px;
+            aspect-ratio: 1;
+            display: block;
+            position: absolute;
+            right: calc(var(--border) * -1);
+            top: calc(var(--border) * -1);
+            left: auto;
+            z-index: 1;
+            --start: 12%;
+            background: conic-gradient(
+                from var(--conic, -45deg) at center in oklch,
+                transparent var(--start,0%), hsl(var(--hue), var(--sat,80%), var(--lit,60%)), transparent var(--end,50%) 
+            ) border-box;
+            mask: linear-gradient(transparent), linear-gradient(black);
+            mask-repeat: no-repeat;
+            mask-clip: padding-box, border-box;
+            mask-composite: subtract;
+        }
+
+        .item .shine::before, .item .shine::after {
+            content: "";
+            width: auto;
+            inset: -2px;
+            mask: none;
+        }
+
+        .item .shine::after {
+            z-index: 2;
+            --start: 17%;
+            --end: 33%;
+            background: conic-gradient(
+                from var(--conic, -45deg) at center in oklch,
+                transparent var(--start,0%), hsl(var(--hue), var(--sat,80%), var(--lit,85%)), transparent var(--end,50%) 
+            );
+        }
+
+        .item .shine-bottom {
+            top: auto;
+            bottom: calc(var(--border) * -1);
+            left: calc(var(--border) * -1);
+            right: auto;
+        }
+
+        .item .glow {
+            pointer-events: none;
+            border-top-right-radius: calc(var(--radius) * 2.5);
+            border-bottom-left-radius: calc(var(--radius) * 2.5);
+            border: calc(var(--radius) * 1.25) solid transparent;
+            inset: calc(var(--radius) * -2);
+            width: 75%;
+            height: auto;
+            min-height: 0px;
+            aspect-ratio: 1;
+            display: block;
+            position: absolute;
+            left: auto;
+            bottom: auto;
+            mask: url('https://assets.codepen.io/13471/noise-base.png');
+            mask-mode: luminance;
+            mask-size: 29%;
+            opacity: 1;
+            filter: blur(12px) saturate(1.25) brightness(0.5);
+            mix-blend-mode: plus-lighter;
+            z-index: 3;
+        }
+
+        .item .glow.glow-bottom {
+            inset: calc(var(--radius) * -2);
+            top: auto;
+            right: auto;
+        }
+
+        .item .glow::before, .item .glow::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border: inherit;
+            border-radius: inherit;
+            background: conic-gradient(
+                from var(--conic, -45deg) at center in oklch,
+                transparent var(--start,0%), hsl(var(--hue), var(--sat,95%), var(--lit,60%)), transparent var(--end,50%) 
+            ) border-box;
+            mask: linear-gradient(transparent), linear-gradient(black);
+            mask-repeat: no-repeat;
+            mask-clip: padding-box, border-box;
+            mask-composite: subtract;
+            filter: saturate(2) brightness(1);
+        }
+
+        .item .glow::after {
+            --lit: 70%;
+            --sat: 100%;
+            --start: 15%;
+            --end: 35%;
+            border-width: calc(var(--radius) * 1.75);
+            border-radius: calc(var(--radius) * 2.75);
+            inset: calc(var(--radius) * -0.25);
+            z-index: 4;
+            opacity: 0.75;
+        }
+
+        .item.open .shine, .item.open .glow, .item.open .shine-bottom, .item.open .glow-bottom {
+            animation: glow 1s var(--ease) both;
+        }
+
+        .item.open .shine {
+            animation-delay: 0s;
+            animation-duration: 2s;
+        }
+
+        .item.open .glow {
+            animation-delay: 0.2s;
+        }
+
+        .item.open .shine-bottom {
+            animation-delay: 0.1s;
+            animation-duration: 1.8s;
+        }
+
+        .item.open .glow-bottom {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes glow {
+            0% { opacity: 0; }
+            3% { opacity: 1; }
+            10% { opacity: 0; }
+            12% { opacity: 0.7; }
+            16% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes glowoff {
+            to { opacity: 0; }
+        }
+
+        @keyframes flash {
+            0% { opacity: 0; --item-opacity: 0; }
+            7% { opacity: 0.5; --item-opacity: 1; }
+            14% { opacity: 0; --item-opacity: 0.5; }
+            21%, 100% { opacity: 1; --item-opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-btn" onclick="showLogin()">Connexion Admin</div>
+    <div id="app">
+        <header>
+            <img src="https://sdmntpritalynorth.oaiusercontent.com/files/00000000-2310-6246-a846-a8862e8c17ff/raw?se=2025-06-10T02%3A10%3A36Z&sp=r&sv=2024-08-04&sr=b&scid=7825711c-c1d9-524c-af5e-acf94df0f4e8&skoid=04233560-0ad7-493e-8bf0-1347c317d021&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-06-09T22%3A13%3A52Z&ske=2025-06-10T22%3A13%3A52Z&sks=b&skv=2024-08-04&sig=yFO%2BIQqCCVxpwWGY6WJG66r3qb0wQbtMfslgKV4EQdY%3D" alt="Streetz War Logo">
+            <h1>Streetz War Roblox Shop</h1>
+            <p>Personnalisez votre expérience avec des articles exclusifs !</p>
+        </header>
+        <div id="login" class="auth-container">
+            <div class="inner">
+                <h2>Connexion Admin</h2>
+                <input type="text" id="loginUsername" placeholder="Nom d'utilisateur" value="" required>
+                <input type="password" id="loginPassword" placeholder="Mot de passe" value="" required>
+                <button onclick="login()">Connexion</button>
+                <button onclick="closeLogin()">Annuler</button>
+            </div>
+        </div>
+        <div id="admin" class="admin-container">
+            <div class="inner">
+                <h2>Gestion Boutique</h2>
+                <h3>Ajouter un article</h3>
+                <input type="text" id="adminName" placeholder="Nom de l'article" value="">
+                <input type="text" id="adminPrice" placeholder="Prix (ex. 4.99€ ou 200 Robux)" value="">
+                <input type="text" id="adminImage" placeholder="URL de l'image" value="">
+                <input type="text" id="adminLink" placeholder="Lien d'achat" value="">
+                <button onclick="addItem()">Ajouter</button>
+                <hr>
+                <h3>Supprimer un article</h3>
+                <input type="text" id="adminDeleteName" placeholder="Nom de l'article à supprimer" value="">
+                <button onclick="deleteItem()">Supprimer</button>
+                <hr>
+                <button onclick="logout()">Déconnexion</button>
+                <button onclick="closeAdmin()">Fermer</button>
+            </div>
+        </div>
+        <div class="shop" id="shop"></div>
+    </div>
+
+    <script>
+        let isAdmin = false;
+        const ADMIN_USERNAME = 'admin';
+        // Le mot de passe est intentionnellement omis pour des raisons de sécurité.
+        // Pour un site hébergé sur GitHub, configurez les identifiants via une solution sécurisée
+        // comme un serveur backend ou un service d'authentification (ex. Firebase, Auth0).
+        // Pour cet exemple, le mot de passe est stocké côté client de manière simplifiée.
+        // NE JAMAIS EXPOSER DE VRAIES CREDENTIALS DANS LE CODE PUBLIC!
+        const ADMIN_PASSWORD = atob('YWRtaW4xMjM='); // Base64 pour obscurcir, non sécurisé pour la prod
+
+        // Articles initiaux
+        const initialItems = [
+            { name: "400 Robux", price: "4.99€", image: "https://via.placeholder.com/250x150?text=Robux", link: "https://roblox.com/buy/robux/400" },
+            { name: "1000 Robux", price: "9.99€", image: "https://via.placeholder.com/250x150?text=Robux", link: "https://roblox.com/buy/robux/1000" },
+            { name: "Streetz Jacket", price: "50 Robux", image: "https://via.placeholder.com/250x150?text=Vêtement", link: "https://roblox.com/buy/item/jacket" },
+            { name: "Gamepass Gang Leader", price: "200 Robux", image: "https://via.placeholder.com/250x150?text=Gamepass", link: "https://roblox.com/buy/gamepass/gang-leader" },
+            { name: "Streetz Cap", price: "150 Robux", image: "https://via.placeholder.com/250x150?text=Accessoire", link: "https://roblox.com/buy/item/cap" },
+            { name: "Streetz War Premium", price: "4.99€", image: "https://via.placeholder.com/250x150?text=Premium", link: "https://roblox.com/buy/premium" }
+        ];
+
+        // Initialiser les articles
+        function initializeShop() {
+            const savedItems = JSON.parse(localStorage.getItem('shopItems'));
+            if (!savedItems) {
+                localStorage.setItem('shopItems', JSON.stringify(initialItems));
+            }
+            renderShop();
+            restoreFormValues();
+        }
+
+        // Afficher les articles
+        function renderShop() {
+            const shop = document.getElementById('shop');
+            shop.innerHTML = '';
+            const items = JSON.parse(localStorage.getItem('shopItems')) || [];
+            items.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.classList.add('item', 'open');
+                itemElement.innerHTML = `
+                    <div class="shine"></div>
+                    <div class="shine shine-bottom"></div>
+                    <div class="glow"></div>
+                    <div class="glow glow-bottom"></div>
+                    <img src="${item.image}" alt="${item.name}">
+                    <h2>${item.name}</h2>
+                    <p>Prix : ${item.price}</p>
+                    <a href="${item.link}" target="_blank">Acheter</a>
+                    ${isAdmin ? `<button onclick="editItemImage('${item.name}')">Changer Image</button>` : ''}
+                `;
+                shop.appendChild(itemElement);
+            });
+        }
+
+        // Restaurer les valeurs des champs de formulaire
+        function restoreFormValues() {
+            const fields = [
+                'loginUsername', 'adminName', 'adminPrice',
+                'adminImage', 'adminLink', 'adminDeleteName'
+            ];
+            fields.forEach(id => {
+                const value = localStorage.getItem(id) || '';
+                document.getElementById(id).value = value;
+            });
+            // Ne pas restaurer le mot de passe pour des raisons de sécurité
+            document.getElementById('loginPassword').value = '';
+        }
+
+        // Sauvegarder les valeurs des champs de formulaire
+        function saveFormValues() {
+            const fields = [
+                'loginUsername', 'adminName', 'adminPrice',
+                'adminImage', 'adminLink', 'adminDeleteName'
+            ];
+            fields.forEach(id => {
+                const value = document.getElementById(id).value;
+                localStorage.setItem(id, value);
+            });
+            // Ne pas sauvegarder le mot de passe dans localStorage
+        }
+
+        // Afficher la connexion admin
+        function showLogin() {
+            document.getElementById('login').classList.add('open');
+            saveFormValues();
+        }
+
+        // Fermer la connexion
+        function closeLogin() {
+            document.getElementById('login').classList.remove('open');
+            saveFormValues();
+        }
+
+        // Connexion admin
+        function login() {
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                isAdmin = true;
+                document.getElementById('login').classList.remove('open');
+                document.getElementById('admin').classList.add('open');
+                renderShop();
+            } else {
+                alert('Nom d’utilisateur ou mot de passe incorrect.');
+            }
+            saveFormValues();
+            document.getElementById('loginPassword').value = ''; // Effacer le champ mot de passe
+        }
+
+        // Déconnexion
+        function logout() {
+            isAdmin = false;
+            document.getElementById('admin').classList.remove('open');
+            renderShop();
+            saveFormValues();
+            document.getElementById('loginPassword').value = ''; // Effacer le champ mot de passe
+        }
+
+        // Fermer le panneau admin
+        function closeAdmin() {
+            document.getElementById('admin').classList.remove('open');
+            saveFormValues();
+        }
+
+        // Ajouter un article
+        function addItem() {
+            const name = document.getElementById('adminName').value;
+            const price = document.getElementById('adminPrice').value;
+            const image = document.getElementById('adminImage').value;
+            const link = document.getElementById('adminLink').value;
+
+            if (!name || !price || !image || !link) {
+                alert('Veuillez remplir tous les champs.');
+                return;
+            }
+
+            const items = JSON.parse(localStorage.getItem('shopItems')) || [];
+            if (items.find(item => item.name === name)) {
+                alert('Cet article existe déjà.');
+                return;
+            }
+
+            items.push({ name, price, image, link });
+            localStorage.setItem('shopItems', JSON.stringify(items));
+            renderShop();
+            saveFormValues();
+            alert('Article ajouté !');
+        }
+
+        // Supprimer un article
+        function deleteItem() {
+            const name = document.getElementById('adminDeleteName').value;
+            let items = JSON.parse(localStorage.getItem('shopItems')) || [];
+            if (!items.find(item => item.name === name)) {
+                alert('Article non trouvé.');
+                return;
+            }
+
+            items = items.filter(item => item.name !== name);
+            localStorage.setItem('shopItems', JSON.stringify(items));
+            renderShop();
+            saveFormValues();
+            alert('Article supprimé !');
+        }
+
+        // Changer l'image d'un article
+        function editItemImage(name) {
+            const newImage = prompt(`Entrez la nouvelle URL de l'image pour ${name}`);
+            if (newImage) {
+                const items = JSON.parse(localStorage.getItem('shopItems')) || [];
+                const item = items.find(item => item.name === name);
+                if (item) {
+                    item.image = newImage;
+                    localStorage.setItem('shopItems', JSON.stringify(items));
+                    renderShop();
+                    alert('Image mise à jour !');
+                }
+            }
+            saveFormValues();
+        }
+
+        // Événements
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // Ajouter des écouteurs pour sauvegarder les valeurs en temps réel
+        const fields = [
+            'loginUsername', 'adminName', 'adminPrice',
+            'adminImage', 'adminLink', 'adminDeleteName'
+        ];
+        fields.forEach(id => {
+            document.getElementById(id).addEventListener('input', saveFormValues);
+        });
+
+        // Initialiser la boutique
+        initializeShop();
+    </script>
+</body>
+</html>
